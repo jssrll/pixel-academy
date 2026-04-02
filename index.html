@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Library Vista | Digital Catalog</title>
+    <title>Pixel Academy | Digital Library</title>
     
-    <!-- ========== PWA META TAGS (CRITICAL FOR INSTALL) ========== -->
+    <!-- ========== PWA META TAGS ========== -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Library Vista">
+    <meta name="apple-mobile-web-app-title" content="Pixel Academy">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Library Vista">
-    <meta name="msapplication-TileColor" content="#007aff">
+    <meta name="application-name" content="Pixel Academy">
+    <meta name="msapplication-TileColor" content="#2c3e50">
     <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#007aff">
+    <meta name="theme-color" content="#2c3e50">
     
     <!-- ========== WEB APP MANIFEST ========== -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="./manifest.json">
     
     <!-- ========== FAVICON FILES ========== -->
     <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
@@ -90,24 +90,13 @@
     </div>
 </div>
 
-<!-- Install PWA Prompt (shows when app is installable) -->
-<div id="installPrompt" class="install-prompt" style="display: none;">
-    <div class="install-prompt-content">
-        <i class="fas fa-download"></i>
-        <div>
-            <h4>Install Pixel Academy</h4>
-            <p>Add to home screen for easy access</p>
-        </div>
-        <button id="installBtn" class="install-btn">Install</button>
-        <button id="closeInstallPrompt" class="close-install">&times;</button>
-    </div>
-</div>
-
 <!-- PWA Service Worker Registration -->
 <script>
+    // Fix: Use correct path for service worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
+            // Use relative path './sw.js' instead of '/sw.js'
+            navigator.serviceWorker.register('./sw.js')
                 .then(registration => {
                     console.log('✅ Service Worker registered successfully:', registration.scope);
                 })
@@ -117,34 +106,64 @@
         });
     }
     
-    // Check if app is installed and show install prompt
+    // PWA Install Prompt - Custom Button
     let deferredPrompt;
+    const installPromptDiv = document.getElementById('installPrompt');
+    
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        console.log('✅ Install prompt available');
+        console.log('✅ Install prompt available - showing custom button');
         
-        // Optional: Show a custom install button
-        const installBtn = document.createElement('div');
-        installBtn.innerHTML = '<i class="fas fa-download"></i> Install App';
-        installBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#007aff;color:white;padding:12px 20px;border-radius:30px;cursor:pointer;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-weight:500;';
-        installBtn.addEventListener('click', () => {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                }
-                deferredPrompt = null;
-                installBtn.remove();
-            });
-        });
-        document.body.appendChild(installBtn);
+        // Show custom install prompt
+        if (installPromptDiv) {
+            installPromptDiv.style.display = 'block';
+        }
     });
+    
+    // Handle install button click
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User ${outcome} the install prompt`);
+                deferredPrompt = null;
+                
+                // Hide custom prompt
+                if (installPromptDiv) {
+                    installPromptDiv.style.display = 'none';
+                }
+            }
+        });
+    }
+    
+    // Close install prompt
+    const closeInstallPrompt = document.getElementById('closeInstallPrompt');
+    if (closeInstallPrompt) {
+        closeInstallPrompt.addEventListener('click', () => {
+            if (installPromptDiv) {
+                installPromptDiv.style.display = 'none';
+            }
+        });
+    }
     
     // Handle app installed event
     window.addEventListener('appinstalled', () => {
         console.log('✅ App was installed successfully');
+        if (installPromptDiv) {
+            installPromptDiv.style.display = 'none';
+        }
     });
+    
+    // Check if already installed (standalone mode)
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        console.log('App is running in standalone mode (installed)');
+        if (installPromptDiv) {
+            installPromptDiv.style.display = 'none';
+        }
+    }
 </script>
 
 <!-- JavaScript Files -->
