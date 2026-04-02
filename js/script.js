@@ -20,7 +20,62 @@ const modalAuthorElem = document.getElementById("modalAuthor");
 const modalCategory = document.getElementById("modalCategory");
 const modalDesc = document.getElementById("modalDesc");
 const modalLink = document.getElementById("modalLink");
-const profileBtn = document.getElementById("profileIconBtn");
+
+// ========================================
+// CHATBASE AI FUNCTIONS
+// ========================================
+
+function loadChatbaseAI() {
+    if (document.readyState === 'complete') {
+        setTimeout(initChatbase, 500);
+    } else {
+        window.addEventListener('load', () => setTimeout(initChatbase, 500));
+    }
+}
+
+function initChatbase() {
+    if (window.chatbase && window.chatbase("getState") === "initialized") return;
+    
+    window.chatbaseConfig = { chatbotId: "Zqs29nX4-jV3VlilBTsjp" };
+    const script = document.createElement('script');
+    script.src = "https://www.chatbase.co/embed.min.js";
+    script.id = "Zqs29nX4-jV3VlilBTsjp";
+    script.defer = true;
+    document.body.appendChild(script);
+}
+
+function removeChatbaseAI() {
+    const ids = ['Zqs29nX4-jV3VlilBTsjp', 'chatbase-frame', 'chatbase-bubble', 'chatbase-widget'];
+    ids.forEach(id => document.getElementById(id)?.remove());
+    
+    const selectors = [
+        'script[src*="chatbase"]', 'iframe[src*="chatbase"]', 'div[id*="chatbase"]', 'div[class*="chatbase"]',
+        'div[style*="z-index: 2147483647"]', 'div[style*="position: fixed"][style*="bottom: 0"][style*="right: 0"]'
+    ];
+    selectors.forEach(selector => document.querySelectorAll(selector).forEach(el => el.remove()));
+    
+    delete window.chatbaseConfig;
+    delete window.chatbase;
+}
+
+function addChatbaseHideCSS() {
+    const styleId = 'chatbase-hide-style';
+    if (document.getElementById(styleId)) return;
+    
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+        #loginPage ~ div[class*="chatbase"],
+        #loginPage ~ iframe[src*="chatbase"],
+        body:has(#loginPage[style*="display: flex"]) div[class*="chatbase"] {
+            display: none !important;
+        }
+        .dashboard-container, #loginPage { transition: opacity 0.3s ease; }
+    `;
+    document.head.appendChild(style);
+}
+
+addChatbaseHideCSS();
 
 // ========================================
 // FORCE APP INSTALL - BLOCK ACCESS TO BOOKS
@@ -142,7 +197,7 @@ function showToastMessage(message, duration = 2000) {
     }
 }
 
-// Navigation
+// Navigation - REMOVED MinSU Portal
 document.querySelectorAll(".nav-tab").forEach(tab => {
     tab.addEventListener("click", () => {
         // Check if app is installed before switching pages
@@ -162,11 +217,18 @@ document.querySelectorAll(".nav-tab").forEach(tab => {
         } else {
             categoryStrip.style.display = "none";
             if (currentPage === "ai-tools") mainContainer.innerHTML = showAIToolsPage();
-            else if (currentPage === "minsu") mainContainer.innerHTML = showMinsuPortal();
             else if (currentPage === "settings") renderSettingsPage();
         }
     });
 });
+
+// HIDE the MinSU Portal tab - remove it from DOM
+function hideMinsuPortalTab() {
+    const minsuTab = document.querySelector('.nav-tab[data-page="minsu"]');
+    if (minsuTab) {
+        minsuTab.style.display = 'none';
+    }
+}
 
 function renderLibraryView() {
     // Block if app not installed
@@ -348,14 +410,6 @@ refreshBtn.addEventListener("click", () => {
 closeModalBtn.addEventListener("click", () => modal.classList.remove("active"));
 window.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("active"); });
 
-profileBtn.addEventListener("click", () => {
-    if (!isAppInstalled) {
-        showAppRequiredOverlay();
-        return;
-    }
-    alert("👤 User Profile\n\nWelcome to Pixel Academy!\n\n• Total Books: " + getAllBooks().length + "\n• Categories: " + Object.keys(booksDB).length);
-});
-
 // Expose functions to global scope
 window.triggerForceInstall = triggerForceInstall;
 window.showAppRequiredOverlay = showAppRequiredOverlay;
@@ -365,8 +419,14 @@ window.checkIfAppInstalled = checkIfAppInstalled;
 // Initialize
 loadSettings();
 
+// Hide MinSU Portal tab
+hideMinsuPortalTab();
+
 // Initialize force install check first
 initForceInstall();
+
+// Load Chatbase AI
+loadChatbaseAI();
 
 // Only render library if app is installed
 if (isAppInstalled) {
