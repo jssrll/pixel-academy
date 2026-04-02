@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Pixel Academy">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Pixel Academy">
+    meta name="application-name" content="Pixel Academy">
     <meta name="msapplication-TileColor" content="#2c3e50">
     <meta name="msapplication-TileImage" content="./favicon/ms-icon-144x144.png">
     <meta name="theme-color" content="#2c3e50">
@@ -18,18 +18,15 @@
     <!-- ========== WEB APP MANIFEST ========== -->
     <link rel="manifest" href="./manifest.json">
     
-    <!-- ========== FAVICON FILES (Para sa browser tab) ========== -->
-    <!-- Basic favicon - gumagaran to sa lahat ng browser -->
+    <!-- ========== FAVICON FILES ========== -->
     <link rel="icon" type="image/x-icon" href="./favicon/favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="./favicon/favicon.ico">
-    
-    <!-- PNG favicons para sa modern browsers -->
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="48x48" href="./favicon/favicon-48x48.png">
     <link rel="icon" type="image/png" sizes="96x96" href="./favicon/favicon-96x96.png">
     
-    <!-- ========== APPLE TOUCH ICONS (Para sa iOS) ========== -->
+    <!-- ========== APPLE TOUCH ICONS ========== -->
     <link rel="apple-touch-icon" sizes="57x57" href="./favicon/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="./favicon/apple-touch-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="./favicon/apple-touch-icon-72x72.png">
@@ -55,7 +52,7 @@
 
 <header class="app-header">
     <div class="logo-area">
-        <i class="fas fa-book-open" style="color: #2c3e50; font-size: 1.8rem;"></i>
+        <img src="favicon/favicon-32x32.png" alt="Pixel Academy" style="width: 32px; height: 32px;">
         <div>
             <h1>Pixel Academy</h1>
             <p>digital library · free for minsu students</p>
@@ -65,6 +62,10 @@
         <div class="nav-tab active" data-page="library"><i class="fas fa-book"></i> Library</div>
         <div class="nav-tab" data-page="ai-tools"><i class="fas fa-robot"></i> AI Tools</div>
         <div class="nav-tab" data-page="settings"><i class="fas fa-cog"></i> Settings</div>
+    </div>
+    <div class="header-actions">
+        <div class="library-stats" id="statsDisplay"><i class="fas fa-layer-group"></i> <span id="totalBooksCount">0</span> resources</div>
+        <button class="refresh-btn" id="manualRefreshBtn"><i class="fas fa-arrow-rotate-right"></i></button>
     </div>
 </header>
 
@@ -96,7 +97,7 @@
             <i class="fas fa-book-open"></i>
         </div>
         <h2>App Required</h2>
-        <p>To access and open out free books in Pixel Academy, you need to install our web app first.</p>
+        <p>To access and open our free books in Pixel Academy, you need to install our web app first.</p>
         <div class="app-required-features">
             <div class="feature-item">
                 <i class="fas fa-check-circle"></i>
@@ -126,7 +127,7 @@
     </div>
 </div>
 
-<!-- Install PWA Prompt (shows when app is installable) -->
+<!-- Install PWA Prompt -->
 <div id="installPrompt" class="install-prompt" style="display: none;">
     <div class="install-prompt-content">
         <i class="fas fa-download"></i>
@@ -141,10 +142,8 @@
 
 <!-- PWA Service Worker Registration -->
 <script>
-    // Fix: Use correct path for service worker
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            // Use relative path './sw.js' instead of '/sw.js'
             navigator.serviceWorker.register('./sw.js')
                 .then(registration => {
                     console.log('✅ Service Worker registered successfully:', registration.scope);
@@ -155,22 +154,18 @@
         });
     }
     
-    // PWA Install Prompt - Custom Button
     let deferredPrompt;
     const installPromptDiv = document.getElementById('installPrompt');
     
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        console.log('✅ Install prompt available - showing custom button');
-        
-        // Show custom install prompt
+        console.log('✅ Install prompt available');
         if (installPromptDiv) {
             installPromptDiv.style.display = 'block';
         }
     });
     
-    // Handle install button click
     const installBtn = document.getElementById('installBtn');
     if (installBtn) {
         installBtn.addEventListener('click', async () => {
@@ -179,8 +174,6 @@
                 const { outcome } = await deferredPrompt.userChoice;
                 console.log(`User ${outcome} the install prompt`);
                 deferredPrompt = null;
-                
-                // Hide custom prompt
                 if (installPromptDiv) {
                     installPromptDiv.style.display = 'none';
                 }
@@ -188,7 +181,6 @@
         });
     }
     
-    // Close install prompt
     const closeInstallPrompt = document.getElementById('closeInstallPrompt');
     if (closeInstallPrompt) {
         closeInstallPrompt.addEventListener('click', () => {
@@ -198,7 +190,6 @@
         });
     }
     
-    // Handle app installed event
     window.addEventListener('appinstalled', () => {
         console.log('✅ App was installed successfully');
         if (installPromptDiv) {
@@ -206,7 +197,6 @@
         }
     });
     
-    // Check if already installed (standalone mode)
     if (window.matchMedia('(display-mode: standalone)').matches) {
         console.log('App is running in standalone mode (installed)');
         if (installPromptDiv) {
@@ -214,7 +204,6 @@
         }
     }
     
-    // Force refresh favicon on deployed site
     (function refreshFavicon() {
         const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
         link.type = 'image/x-icon';
@@ -227,8 +216,8 @@
 <!-- JavaScript Files -->
 <script src="js/books-database.js"></script>
 <script src="js/ai-tools.js"></script>
-<script src="js/minsu-portal.js"></script>
 <script src="js/settings.js"></script>
+<script src="js/chatbase.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>
