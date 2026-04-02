@@ -245,6 +245,7 @@ const booksDB = {
         { title: "Jack D. Schwager - Stock Market Wizards", url: "https://drive.google.com/file/d/1nkzjSR3MYnJ2GFnP6GCahdpesSkKItfN/view?usp=drivesdk" },
         { title: "Jack D. Schwager - The Little Book of Market Wizards", url: "https://drive.google.com/file/d/15lXlKvk9-Cp2Ue7uoNOAhv5Cq_9_juq1/view?usp=drivesdk" },
         { title: "Jack D. Schwager - Unknown Market Wizards", url: "https://drive.google.com/file/d/1xWbHdYRtFiabfwZC68GLntm3KY5S4WiN/view?usp=drivesdk" },
+                { title: "James Altucher - Trade Like Warren Buffett", url: "https://drive.google.com/file/d/1b4Eisc6JdVxzv-VSDTS5AVYt_gGfwbO1/view?usp=drivesdk" },
         { title: "James Altucher - Trade Like Warren Buffett", url: "https://drive.google.com/file/d/1b4Eisc6JdVxzv-VSDTS5AVYt_gGfwbO1/view?usp=drivesdk" }
     ]
 };
