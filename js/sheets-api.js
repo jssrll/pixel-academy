@@ -1,38 +1,32 @@
 // ========== GOOGLE SHEETS API INTEGRATION ==========
+// FIXED VERSION - Removed no-cors mode
 
 class SheetsAPI {
     constructor(apiUrl) {
         this.apiUrl = apiUrl;
     }
 
-    // Register new user
+    // Register new user - FIXED
     async registerUser(userData) {
         try {
+            // Create form data
+            const formData = new URLSearchParams();
+            formData.append('action', 'register');
+            formData.append('fullName', userData.fullName);
+            formData.append('schoolId', userData.schoolId);
+            formData.append('password', userData.password);
+            formData.append('program', userData.program);
+            formData.append('yearLevel', userData.yearLevel);
+            formData.append('section', userData.section);
+            formData.append('joined', userData.joined);
+            
             const response = await fetch(this.apiUrl, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: new URLSearchParams({
-                    action: 'register',
-                    ...userData
-                })
+                body: formData.toString()
             });
-            
-            // Since it's no-cors, we can't read response directly
-            // Return success and let the server handle it
-            return { success: true, message: 'Registration submitted successfully!' };
-        } catch (error) {
-            console.error('Registration error:', error);
-            return { success: false, message: 'Network error. Please try again.' };
-        }
-    }
-
-    // Login user
-    async loginUser(schoolId, password) {
-        try {
-            const response = await fetch(`${this.apiUrl}?action=login&schoolId=${encodeURIComponent(schoolId)}&password=${encodeURIComponent(password)}`);
             
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -41,8 +35,29 @@ class SheetsAPI {
             const data = await response.json();
             return data;
         } catch (error) {
+            console.error('Registration error:', error);
+            return { success: false, message: 'Network error: ' + error.message };
+        }
+    }
+
+    // Login user
+    async loginUser(schoolId, password) {
+        try {
+            const url = `${this.apiUrl}?action=login&schoolId=${encodeURIComponent(schoolId)}&password=${encodeURIComponent(password)}`;
+            console.log('Login URL:', url);
+            
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            const data = await response.json();
+            console.log('Login response:', data);
+            return data;
+        } catch (error) {
             console.error('Login error:', error);
-            return { success: false, message: 'Network error. Please try again.' };
+            return { success: false, message: 'Network error: ' + error.message };
         }
     }
 

@@ -1,4 +1,5 @@
 // ========== AUTHENTICATION ==========
+// FIXED VERSION
 
 let currentUser = null;
 
@@ -22,17 +23,24 @@ async function handleLogin() {
     errorDiv.innerText = '';
     showLoading(true);
     
-    const result = await sheetsAPI.loginUser(schoolId, password);
-    
-    showLoading(false);
-    
-    if (result.success && result.user) {
-        currentUser = result.user;
-        localStorage.setItem('pixelSession', JSON.stringify(currentUser));
-        showDashboard();
-        showToast('Login successful! Welcome back!', 'success');
-    } else {
-        errorDiv.innerText = result.message || 'Invalid School ID or Password';
+    try {
+        const result = await sheetsAPI.loginUser(schoolId, password);
+        console.log('Login result:', result);
+        
+        showLoading(false);
+        
+        if (result.success && result.user) {
+            currentUser = result.user;
+            localStorage.setItem('pixelSession', JSON.stringify(currentUser));
+            showDashboard();
+            showToast('Login successful! Welcome back!', 'success');
+        } else {
+            errorDiv.innerText = result.message || 'Invalid School ID or Password';
+        }
+    } catch (error) {
+        showLoading(false);
+        errorDiv.innerText = 'Connection error. Please try again.';
+        console.error('Login error:', error);
     }
 }
 
@@ -91,33 +99,42 @@ async function handleRegister(event) {
     
     showLoading(true);
     
-    const result = await sheetsAPI.registerUser({
-        fullName,
-        schoolId,
-        password,
-        program,
-        yearLevel,
-        section,
-        joined: new Date().toLocaleDateString()
-    });
-    
-    showLoading(false);
-    
-    if (result.success) {
-        successDiv.style.display = 'block';
-        successDiv.innerText = result.message + ' Please wait for account approval.';
+    try {
+        const result = await sheetsAPI.registerUser({
+            fullName,
+            schoolId,
+            password,
+            program,
+            yearLevel,
+            section,
+            joined: new Date().toLocaleDateString()
+        });
         
-        // Clear form
-        document.getElementById('registrationForm').reset();
+        console.log('Registration result:', result);
+        showLoading(false);
         
-        // Close modal after 3 seconds
-        setTimeout(() => {
-            document.getElementById('registrationModal').style.display = 'none';
-            successDiv.style.display = 'none';
-        }, 3000);
-    } else {
+        if (result.success) {
+            successDiv.style.display = 'block';
+            successDiv.innerText = result.message || 'Registration successful! You can now login.';
+            successDiv.style.color = '#10b981';
+            
+            // Clear form
+            document.getElementById('registrationForm').reset();
+            
+            // Close modal after 3 seconds
+            setTimeout(() => {
+                document.getElementById('registrationModal').style.display = 'none';
+                successDiv.style.display = 'none';
+            }, 3000);
+        } else {
+            errorDiv.style.display = 'block';
+            errorDiv.innerText = result.message || 'Registration failed. Please try again.';
+        }
+    } catch (error) {
+        showLoading(false);
         errorDiv.style.display = 'block';
-        errorDiv.innerText = result.message;
+        errorDiv.innerText = 'Connection error. Please try again.';
+        console.error('Registration error:', error);
     }
 }
 

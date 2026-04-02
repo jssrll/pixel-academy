@@ -4,7 +4,7 @@ const CONFIG = {
     // Google Sheets API Configuration
     // You need to deploy your own Google Apps Script Web App
     // Replace with your actual Apps Script URL after deployment
-    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbx1f4zqG7zgTur8kjcjCON2NVDhOwwcUKGlqVgyRBCXhwEmsIWqF4tGpfiokNLDWWHufA/exec',
+    SHEETS_API_URL: 'https://script.google.com/macros/s/AKfycbxaX8GArF4Q0H79mSX53ZAzTb0WYTbXUBm_-_0aIUrmauiyxFgoz0sWFItp2medv-2iJA/exec',
     
     // App Settings
     APP_NAME: 'Pixel Academy Portal',
