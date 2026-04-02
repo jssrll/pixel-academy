@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Pixel Academy | Digital Library for Minsu Students</title>
+    <title>Library Vista | Digital Catalog</title>
     
-<!-- PWA Meta Tags -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Pixel Academy">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="Pixel Academy">
-<meta name="msapplication-TileColor" content="#2c3e50">
-<meta name="msapplication-TileImage" content="icons/icon-144x144.png">
-<meta name="theme-color" content="#2c3e50">
+    <!-- ========== PWA META TAGS (CRITICAL FOR INSTALL) ========== -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Library Vista">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Library Vista">
+    <meta name="msapplication-TileColor" content="#007aff">
+    <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#007aff">
     
-    <!-- ======================================== -->
-    <!-- FAVICON FILES - Place your favicon.ico here -->
-    <!-- ======================================== -->
-    <!-- Basic favicon -->
+    <!-- ========== WEB APP MANIFEST ========== -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- ========== FAVICON FILES ========== -->
     <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="48x48" href="favicon/favicon-48x48.png">
     
-    <!-- Apple Touch Icons (for iOS devices) -->
+    <!-- ========== APPLE TOUCH ICONS ========== -->
     <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-touch-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-touch-icon-72x72.png">
@@ -35,12 +35,9 @@
     <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon-180x180.png">
     
-    <!-- Android Chrome Icons (for PWA) -->
+    <!-- ========== ANDROID CHROME ICONS ========== -->
     <link rel="icon" type="image/png" sizes="192x192" href="favicon/android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="favicon/android-chrome-512x512.png">
-    
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="manifest.json">
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
@@ -106,72 +103,49 @@
     </div>
 </div>
 
-<!-- PWA Installation Script -->
+<!-- PWA Service Worker Registration -->
 <script>
-  // Register Service Worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          console.log('ServiceWorker registered successfully:', registration);
-        })
-        .catch(error => {
-          console.log('ServiceWorker registration failed:', error);
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('✅ Service Worker registered successfully:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('❌ Service Worker registration failed:', error);
+                });
         });
-    });
-  }
-  
-  // Handle PWA installation prompt
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    console.log('PWA install prompt available');
+    }
     
-    // Show install banner
-    showInstallBanner();
-  });
-  
-  function showInstallBanner() {
-    const banner = document.getElementById('installBanner');
-    if (banner) {
-      banner.style.display = 'flex';
-    }
-  }
-  
-  function installPWA() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted the install prompt');
-        }
-        deferredPrompt = null;
-        hideInstallBanner();
-      });
-    }
-  }
-  
-  function hideInstallBanner() {
-    const banner = document.getElementById('installBanner');
-    if (banner) {
-      banner.style.display = 'none';
-    }
-  }
+    // Check if app is installed and show install prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        console.log('✅ Install prompt available');
+        
+        // Optional: Show a custom install button
+        const installBtn = document.createElement('div');
+        installBtn.innerHTML = '<i class="fas fa-download"></i> Install App';
+        installBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#007aff;color:white;padding:12px 20px;border-radius:30px;cursor:pointer;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-weight:500;';
+        installBtn.addEventListener('click', () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                deferredPrompt = null;
+                installBtn.remove();
+            });
+        });
+        document.body.appendChild(installBtn);
+    });
+    
+    // Handle app installed event
+    window.addEventListener('appinstalled', () => {
+        console.log('✅ App was installed successfully');
+    });
 </script>
-
-<!-- Install Banner -->
-<div id="installBanner" style="display: none; position: fixed; bottom: 20px; left: 20px; right: 20px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 1000; border: 1px solid #e9e9ef;">
-  <div style="display: flex; align-items: center; gap: 16px; padding: 16px 20px;">
-    <i class="fas fa-download" style="font-size: 2rem; color: #2c3e50;"></i>
-    <div style="flex: 1;">
-      <h4 style="margin: 0 0 4px 0; font-size: 1rem;">Install Pixel Academy</h4>
-      <p style="margin: 0; font-size: 0.8rem; color: #6e6e73;">Add to home screen for easy access</p>
-    </div>
-    <button onclick="installPWA()" style="background: #2c3e50; color: white; border: none; padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: 600;">Install</button>
-    <button onclick="hideInstallBanner()" style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #8e8e93;">&times;</button>
-  </div>
-</div>
 
 <!-- JavaScript Files -->
 <script src="js/books-database.js"></script>
