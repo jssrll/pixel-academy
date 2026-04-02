@@ -1,5 +1,5 @@
-// Service Worker for Pixel Academy PWA
-const CACHE_NAME = 'pixel-academy-v1';
+// Pixel Academy PWA Service Worker
+const CACHE_NAME = 'pixel-academy-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -10,15 +10,17 @@ const urlsToCache = [
   '/js/minsu-portal.js',
   '/js/settings.js',
   '/manifest.json',
-  '/favicon/favicon.ico',
-  '/favicon/favicon-32x32.png',
-  '/favicon/favicon-16x16.png',
-  '/favicon/android-chrome-192x192.png',
-  '/favicon/android-chrome-512x512.png',
-  '/favicon/apple-touch-icon-180x180.png'
+  '/icons/icon-72x72.png',
+  '/icons/icon-96x96.png',
+  '/icons/icon-128x128.png',
+  '/icons/icon-144x144.png',
+  '/icons/icon-152x152.png',
+  '/icons/icon-192x192.png',
+  '/icons/icon-384x384.png',
+  '/icons/icon-512x512.png'
 ];
 
-// Install service worker - cache core assets
+// Install event - cache core assets
 self.addEventListener('install', event => {
   console.log('[Service Worker] Installing Pixel Academy...');
   event.waitUntil(
@@ -32,7 +34,7 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate service worker - clean up old caches
+// Activate event - clean up old caches
 self.addEventListener('activate', event => {
   console.log('[Service Worker] Activating Pixel Academy...');
   event.waitUntil(
@@ -50,7 +52,7 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch from cache first, fallback to network
+// Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
@@ -59,11 +61,9 @@ self.addEventListener('fetch', event => {
           return response;
         }
         return fetch(event.request).then(networkResponse => {
-          // Don't cache non-successful responses
           if (!networkResponse || networkResponse.status !== 200) {
             return networkResponse;
           }
-          // Cache the new resource
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseToCache);
@@ -72,15 +72,16 @@ self.addEventListener('fetch', event => {
         });
       })
       .catch(() => {
-        // Offline fallback for HTML pages
         if (event.request.destination === 'document') {
           return new Response(`
             <!DOCTYPE html>
             <html>
             <head><title>Offline - Pixel Academy</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
-              body { font-family: 'Inter', sans-serif; text-align: center; padding: 50px; background: #f5f5f7; }
+              body { font-family: 'Inter', sans-serif; text-align: center; padding: 50px; background: #f5f5f7; margin: 0; }
               .offline-icon { font-size: 4rem; color: #2c3e50; margin-bottom: 20px; }
+              button { background: #2c3e50; color: white; border: none; padding: 12px 24px; border-radius: 30px; cursor: pointer; margin-top: 20px; }
             </style>
             </head>
             <body>

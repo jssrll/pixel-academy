@@ -5,17 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Pixel Academy | Digital Library for Minsu Students</title>
     
-    <!-- ======================================== -->
-    <!-- PWA META TAGS - REQUIRED FOR INSTALLATION -->
-    <!-- ======================================== -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Pixel Academy">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Pixel Academy">
-    <meta name="msapplication-TileColor" content="#2c3e50">
-    <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
-    <meta name="theme-color" content="#2c3e50">
+<!-- PWA Meta Tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pixel Academy">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Pixel Academy">
+<meta name="msapplication-TileColor" content="#2c3e50">
+<meta name="msapplication-TileImage" content="icons/icon-144x144.png">
+<meta name="theme-color" content="#2c3e50">
     
     <!-- ======================================== -->
     <!-- FAVICON FILES - Place your favicon.ico here -->
@@ -108,55 +106,72 @@
     </div>
 </div>
 
+<!-- PWA Installation Script -->
 <script>
-    // PWA Installation
-    let deferredPrompt;
-    const installPrompt = document.getElementById('installPrompt');
-    const installBtn = document.getElementById('installBtn');
-    const closeInstallPrompt = document.getElementById('closeInstallPrompt');
-    
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installPrompt.style.display = 'flex';
-        
-        // Hide after 10 seconds if not clicked
-        setTimeout(() => {
-            if (installPrompt.style.display === 'flex') {
-                installPrompt.style.display = 'none';
-            }
-        }, 10000);
-    });
-    
-    installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                console.log('User accepted the install prompt');
-            }
-            deferredPrompt = null;
-            installPrompt.style.display = 'none';
-        }
-    });
-    
-    closeInstallPrompt.addEventListener('click', () => {
-        installPrompt.style.display = 'none';
-    });
-    
-    // Register Service Worker for PWA
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(registration => {
-                    console.log('ServiceWorker registered: ', registration);
-                })
-                .catch(error => {
-                    console.log('ServiceWorker registration failed: ', error);
-                });
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('ServiceWorker registered successfully:', registration);
+        })
+        .catch(error => {
+          console.log('ServiceWorker registration failed:', error);
         });
+    });
+  }
+  
+  // Handle PWA installation prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    console.log('PWA install prompt available');
+    
+    // Show install banner
+    showInstallBanner();
+  });
+  
+  function showInstallBanner() {
+    const banner = document.getElementById('installBanner');
+    if (banner) {
+      banner.style.display = 'flex';
     }
+  }
+  
+  function installPWA() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        }
+        deferredPrompt = null;
+        hideInstallBanner();
+      });
+    }
+  }
+  
+  function hideInstallBanner() {
+    const banner = document.getElementById('installBanner');
+    if (banner) {
+      banner.style.display = 'none';
+    }
+  }
 </script>
+
+<!-- Install Banner -->
+<div id="installBanner" style="display: none; position: fixed; bottom: 20px; left: 20px; right: 20px; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 1000; border: 1px solid #e9e9ef;">
+  <div style="display: flex; align-items: center; gap: 16px; padding: 16px 20px;">
+    <i class="fas fa-download" style="font-size: 2rem; color: #2c3e50;"></i>
+    <div style="flex: 1;">
+      <h4 style="margin: 0 0 4px 0; font-size: 1rem;">Install Pixel Academy</h4>
+      <p style="margin: 0; font-size: 0.8rem; color: #6e6e73;">Add to home screen for easy access</p>
+    </div>
+    <button onclick="installPWA()" style="background: #2c3e50; color: white; border: none; padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: 600;">Install</button>
+    <button onclick="hideInstallBanner()" style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #8e8e93;">&times;</button>
+  </div>
+</div>
 
 <!-- JavaScript Files -->
 <script src="js/books-database.js"></script>
