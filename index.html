@@ -3,28 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Pixel Academy Portal · advanced learning</title>
+    <title>Pixel Academy Portal · Advanced Learning</title>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/pages/dashboard.css">
-    <link rel="stylesheet" href="css/pages/about.css">
-    <link rel="stylesheet" href="css/pages/profile.css">
-    <link rel="stylesheet" href="css/pages/fund.css">
-    <link rel="stylesheet" href="css/pages/settings.css">
-    <link rel="stylesheet" href="css/pages/tools.css">
-    <link rel="stylesheet" href="css/pages/ai-tools.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Login Page -->
     <div id="loginPage" class="login-wrapper">
         <div class="glass-card">
             <div class="login-header">
-                <span class="badge">🎓 PIXEL ACADEMY</span>
+                <span class="badge">📘 PIXEL ACADEMY</span>
                 <h2>welcome back</h2>
                 <p>sign in with your school ID</p>
             </div>
@@ -47,12 +39,10 @@
 
     <!-- Dashboard -->
     <div id="dashboardPage" class="dashboard-container">
-        <!-- Burger Menu Button -->
         <button class="burger-menu" id="burgerMenu">
             <i class="fas fa-bars"></i>
         </button>
         
-        <!-- Overlay for mobile -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         
         <div class="dashboard-grid">
@@ -62,20 +52,8 @@
                     <div class="nav-item active" data-page="dashboard">
                         <i class="fas fa-home"></i> Dashboard
                     </div>
-                    <div class="nav-item" data-page="tools">
-                        <i class="fas fa-search"></i> Tools
-                    </div>
-                    <div class="nav-item" data-page="ai-tools">
-                        <i class="fas fa-robot"></i> AI Tools
-                    </div>
                     <div class="nav-item" data-page="profile">
                         <i class="fas fa-user"></i> My Profile
-                    </div>
-                    <div class="nav-item" data-page="minsu-portal">
-                        <i class="fas fa-university"></i> MinSU Portal
-                    </div>
-                    <div class="nav-item" data-page="fund">
-                        <i class="fas fa-heart"></i> Fund
                     </div>
                     <div class="nav-item" data-page="about">
                         <i class="fas fa-info-circle"></i> About
@@ -111,7 +89,7 @@
                     <div class="form-group">
                         <label>Minsu School ID Number</label>
                         <input type="text" id="schoolId" placeholder="e.g., MCC2025-00295" required>
-                        <small>Format: MCCYYYY-XXXXX</small>
+                        <small>Format: MCCYYYY-XXXXX (e.g., MCC2025-00295)</small>
                     </div>
                     
                     <div class="form-group">
@@ -128,13 +106,13 @@
                         <label>Program</label>
                         <select id="program" required>
                             <option value="">Select Program</option>
-                            <option value="BSIT">BSIT</option>
-                            <option value="BAELS">BAELS</option>
-                            <option value="BAPsychology">BAPsychology</option>
-                            <option value="BSTM">BSTM</option>
-                            <option value="BSHM">BSHM</option>
-                            <option value="BSCrim">BSCrim</option>
-                            <option value="BSED">BSED</option>
+                            <option value="BSIT">BSIT - Bachelor of Science in Information Technology</option>
+                            <option value="BAELS">BAELS - Bachelor of Arts in English Language Studies</option>
+                            <option value="BAPsychology">BAPsychology - Bachelor of Arts in Psychology</option>
+                            <option value="BSTM">BSTM - Bachelor of Science in Tourism Management</option>
+                            <option value="BSHM">BSHM - Bachelor of Science in Hospitality Management</option>
+                            <option value="BSCrim">BSCrim - Bachelor of Science in Criminology</option>
+                            <option value="BSED">BSED - Bachelor of Secondary Education</option>
                         </select>
                     </div>
                     
@@ -170,20 +148,7 @@
     <div id="toast" class="toast" style="display: none;"></div>
 
     <!-- Scripts -->
-    <script src="data/categories.js"></script>
-    <script src="data/books.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/utils/helpers.js"></script>
-    <script src="js/sheets-api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/pages/dashboard.js"></script>
-    <script src="js/pages/about.js"></script>
-    <script src="js/pages/profile.js"></script>
-    <script src="js/pages/fund.js"></script>
-    <script src="js/pages/tools.js"></script>
-    <script src="js/pages/ai-tools.js"></script>
-    <script src="js/pages/minsu-portal.js"></script>
-    <script src="js/pages/settings.js"></script>
+    <script src="js/data.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
