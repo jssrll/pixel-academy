@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Pixel Academy Portal · advanced learning</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/pages/dashboard.css">
+    <link rel="stylesheet" href="css/pages/about.css">
+    <link rel="stylesheet" href="css/pages/profile.css">
+    <link rel="stylesheet" href="css/pages/fund.css">
+    <link rel="stylesheet" href="css/pages/settings.css">
+    <link rel="stylesheet" href="css/pages/tools.css">
+    <link rel="stylesheet" href="css/pages/ai-tools.css">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-wrapper">
+        <div class="glass-card">
+            <div class="login-header">
+                <span class="badge">🎓 PIXEL ACADEMY</span>
+                <h2>welcome back</h2>
+                <p>sign in with your school ID</p>
+            </div>
+            <div class="input-group">
+                <label>Minsu School ID Number</label>
+                <input type="text" id="loginSchoolId" placeholder="e.g., MCC2025-00295">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••">
+            </div>
+            <button class="login-btn" id="loginBtn">log in →</button>
+            <div class="register-row">
+                <span>no account?</span>
+                <button class="register-link" id="registerBtn">Register here</button>
+            </div>
+            <div id="loginError" class="error-message"></div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboardPage" class="dashboard-container">
+        <!-- Burger Menu Button -->
+        <button class="burger-menu" id="burgerMenu">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Overlay for mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <div class="dashboard-grid">
+            <aside class="sidebar" id="sidebar">
+                <div class="logo-side">📘 Pixel Academy<span>portal</span></div>
+                <nav>
+                    <div class="nav-item active" data-page="dashboard">
+                        <i class="fas fa-home"></i> Dashboard
+                    </div>
+                    <div class="nav-item" data-page="tools">
+                        <i class="fas fa-search"></i> Tools
+                    </div>
+                    <div class="nav-item" data-page="ai-tools">
+                        <i class="fas fa-robot"></i> AI Tools
+                    </div>
+                    <div class="nav-item" data-page="profile">
+                        <i class="fas fa-user"></i> My Profile
+                    </div>
+                    <div class="nav-item" data-page="minsu-portal">
+                        <i class="fas fa-university"></i> MinSU Portal
+                    </div>
+                    <div class="nav-item" data-page="fund">
+                        <i class="fas fa-heart"></i> Fund
+                    </div>
+                    <div class="nav-item" data-page="about">
+                        <i class="fas fa-info-circle"></i> About
+                    </div>
+                    <div class="nav-item" data-page="settings">
+                        <i class="fas fa-cog"></i> Settings
+                    </div>
+                    <div class="nav-item logout-item" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </div>
+                </nav>
+            </aside>
+            <main class="main-content" id="mainContent">
+                <div class="loading" style="margin: 2rem auto;"></div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="modal" id="registrationModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> Student Registration</h2>
+                <button class="close-btn" id="closeRegistrationBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="registrationForm" class="registration-form">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="fullName" placeholder="e.g., Juan M. Dela Cruz" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Minsu School ID Number</label>
+                        <input type="text" id="schoolId" placeholder="e.g., MCC2025-00295" required>
+                        <small>Format: MCCYYYY-XXXXX</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="password" placeholder="Minimum 6 characters" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Program</label>
+                        <select id="program" required>
+                            <option value="">Select Program</option>
+                            <option value="BSIT">BSIT</option>
+                            <option value="BAELS">BAELS</option>
+                            <option value="BAPsychology">BAPsychology</option>
+                            <option value="BSTM">BSTM</option>
+                            <option value="BSHM">BSHM</option>
+                            <option value="BSCrim">BSCrim</option>
+                            <option value="BSED">BSED</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Year Level</label>
+                        <select id="yearLevel" required>
+                            <option value="">Select Year Level</option>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Section</label>
+                        <input type="text" id="section" placeholder="e.g., 1-F1" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" id="cancelRegBtn">Cancel</button>
+                        <button type="submit" class="btn-submit">Register</button>
+                    </div>
+                    
+                    <div id="regError" class="error-message" style="display: none;"></div>
+                    <div id="regSuccess" class="success-message" style="display: none;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" style="display: none;"></div>
+
+    <!-- Scripts -->
+    <script src="data/categories.js"></script>
+    <script src="data/books.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/sheets-api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/pages/dashboard.js"></script>
+    <script src="js/pages/about.js"></script>
+    <script src="js/pages/profile.js"></script>
+    <script src="js/pages/fund.js"></script>
+    <script src="js/pages/tools.js"></script>
+    <script src="js/pages/ai-tools.js"></script>
+    <script src="js/pages/minsu-portal.js"></script>
+    <script src="js/pages/settings.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
