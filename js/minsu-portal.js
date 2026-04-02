@@ -8,23 +8,18 @@ function showMinsuPortal() {
                 <p class="portal-subtitle">Official enrollment and student services portal</p>
             </div>
             <div class="portal-card">
-                <div class="portal-icon">
-                    <i class="fas fa-external-link-alt"></i>
-                </div>
+                <div class="portal-icon"><i class="fas fa-external-link-alt"></i></div>
                 <h2>Access MinSU Enrollment Portal</h2>
-                <p>Click the button below to open the official Mindoro State University enrollment portal for the Calapan Campus. You will be redirected to an external site.</p>
-                <a href="https://mcc-enrollment.minsu.edu.ph" 
-                   target="_blank" 
-                   rel="noopener noreferrer" 
-                   class="portal-button">
+                <p>Click the button below to open the official Mindoro State University enrollment portal for the Calapan Campus.</p>
+                <a href="https://mcc-enrollment.minsu.edu.ph" target="_blank" rel="noopener noreferrer" class="portal-button">
                     <i class="fas fa-sign-in-alt"></i> Go to MinSU Portal
                 </a>
                 <div class="portal-info">
                     <h4>Important Information:</h4>
                     <ul>
                         <li><i class="fas fa-calendar-alt"></i> Second Semester | AY 2025-2026</li>
-                        <li><i class="fas fa-id-card"></i> You will need your student credentials to log in.</li>
-                        <li><i class="fas fa-question-circle"></i> Forgot your password? Use the "Recover" link on the portal page.</li>
+                        <li><i class="fas fa-id-card"></i> Student credentials required to log in</li>
+                        <li><i class="fas fa-question-circle"></i> Use "Recover" link if you forgot your password</li>
                     </ul>
                 </div>
             </div>

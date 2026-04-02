@@ -4,7 +4,6 @@ let currentPage = "library";
 let currentCategory = "All Books";
 let currentFolder = null;
 
-// DOM Elements
 const mainContainer = document.getElementById("mainContent");
 const categoryStrip = document.getElementById("categoryStrip");
 const categoryContainer = document.getElementById("categoryFilterContainer");
@@ -14,8 +13,8 @@ const modal = document.getElementById("detailModal");
 const closeModalBtn = document.getElementById("closeModalBtn");
 const modalTitle = document.getElementById("modalTitle");
 const modalAuthorElem = document.getElementById("modalAuthor");
-const modalCatValue = document.getElementById("modalCategory");
-const modalDescElem = document.getElementById("modalDesc");
+const modalCategory = document.getElementById("modalCategory");
+const modalDesc = document.getElementById("modalDesc");
 const modalLink = document.getElementById("modalLink");
 const profileBtn = document.getElementById("profileIconBtn");
 
@@ -32,13 +31,9 @@ document.querySelectorAll(".nav-tab").forEach(tab => {
             renderLibraryView();
         } else {
             categoryStrip.style.display = "none";
-            if (currentPage === "ai-tools") {
-                mainContainer.innerHTML = showAIToolsPage();
-            } else if (currentPage === "minsu") {
-                mainContainer.innerHTML = showMinsuPortal();
-            } else if (currentPage === "settings") {
-                renderSettingsPage();
-            }
+            if (currentPage === "ai-tools") mainContainer.innerHTML = showAIToolsPage();
+            else if (currentPage === "minsu") mainContainer.innerHTML = showMinsuPortal();
+            else if (currentPage === "settings") renderSettingsPage();
         }
     });
 });
@@ -50,8 +45,7 @@ function renderLibraryView() {
 }
 
 function updateStats() {
-    const allBooks = getAllBooks();
-    totalBooksSpan.innerText = allBooks.length;
+    totalBooksSpan.innerText = getAllBooks().length;
 }
 
 function renderCategoryChips() {
@@ -79,27 +73,21 @@ function renderCategoryChips() {
 }
 
 function renderBooksGrid() {
-    let books = [];
-    let isFolderView = false;
-    
     if (currentCategory === "All Books") {
-        books = getAllBooks();
+        displayBooks(getAllBooks());
     } else if (hasDirectBooks(currentCategory)) {
-        books = booksDB[currentCategory];
+        displayBooks(booksDB[currentCategory]);
     } else if (hasFolders(currentCategory)) {
         if (currentFolder) {
-            books = getBooksInFolder(currentCategory, currentFolder);
+            displayBooks(getBooksInFolder(currentCategory, currentFolder));
         } else {
-            isFolderView = true;
             const folders = getFolders(currentCategory);
             if (folders) {
                 mainContainer.innerHTML = `
                     <div class="books-grid">
                         ${folders.map(folder => `
                             <div class="book-card folder-card" data-folder="${folder}">
-                                <div class="book-cover">
-                                    <i class="fas fa-folder"></i>
-                                </div>
+                                <div class="book-cover"><i class="fas fa-folder"></i></div>
                                 <div class="book-info">
                                     <div class="book-title">📁 ${folder}</div>
                                     <div class="book-author">${getBooksInFolder(currentCategory, folder).length} books</div>
@@ -108,7 +96,6 @@ function renderBooksGrid() {
                         `).join('')}
                     </div>
                 `;
-                
                 document.querySelectorAll('.folder-card').forEach(card => {
                     card.addEventListener('click', () => {
                         currentFolder = card.dataset.folder;
@@ -119,51 +106,42 @@ function renderBooksGrid() {
             }
         }
     }
-    
-    if (!isFolderView) {
-        if (!books || books.length === 0) {
-            mainContainer.innerHTML = `<div class="empty-state">No books found in this category.</div>`;
-            return;
-        }
-        
-        mainContainer.innerHTML = `
-            <div class="books-grid">
-                ${books.map((book, index) => `
-                    <div class="book-card" data-index="${index}" data-title="${escapeHtml(book.title)}" data-url="${book.url}">
-                        <div class="book-cover">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <div class="book-info">
-                            <div class="book-title">${escapeHtml(book.title)}</div>
-                            <div class="book-author">PDF Document</div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-        
-        document.querySelectorAll('.book-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                const url = card.dataset.url;
-                const title = card.dataset.title;
-                if (url && url !== "#") {
-                    showBookDetails(title, url);
-                } else {
-                    alert("This book link will be available soon.");
-                }
-            });
-        });
-    }
 }
 
-function showBookDetails(title, url) {
-    modalTitle.innerText = title;
-    modalAuthorElem.innerHTML = `<i class="fas fa-file-pdf"></i> PDF Document`;
-    modalCatValue.innerHTML = `<strong>Category:</strong> ${currentCategory}${currentFolder ? ` / ${currentFolder}` : ''}`;
-    modalDescElem.innerHTML = `Click the button below to open this PDF document in Google Drive.`;
-    modalLink.href = url;
-    modalLink.target = "_blank";
-    modal.classList.add("active");
+function displayBooks(books) {
+    if (!books || books.length === 0) {
+        mainContainer.innerHTML = `<div class="empty-state">No books found in this category.</div>`;
+        return;
+    }
+    
+    mainContainer.innerHTML = `
+        <div class="books-grid">
+            ${books.map((book, i) => `
+                <div class="book-card" data-url="${book.url}" data-title="${escapeHtml(book.title)}">
+                    <div class="book-cover"><i class="fas fa-book"></i></div>
+                    <div class="book-info">
+                        <div class="book-title">${escapeHtml(book.title)}</div>
+                        <div class="book-author">PDF Document</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    document.querySelectorAll('.book-card:not(.folder-card)').forEach(card => {
+        card.addEventListener('click', () => {
+            const url = card.dataset.url;
+            const title = card.dataset.title;
+            if (url && url !== "#") {
+                modalTitle.innerText = title;
+                modalAuthorElem.innerHTML = `<i class="fas fa-file-pdf"></i> PDF Document`;
+                modalCategory.innerHTML = `<strong>Category:</strong> ${currentCategory}${currentFolder ? ` / ${currentFolder}` : ''}`;
+                modalDesc.innerHTML = `Click the button below to open this PDF document in Google Drive.`;
+                modalLink.href = url;
+                modal.classList.add("active");
+            }
+        });
+    });
 }
 
 function escapeHtml(str) {
@@ -176,21 +154,10 @@ function escapeHtml(str) {
     });
 }
 
-// Refresh button
-refreshBtn.addEventListener("click", () => {
-    renderLibraryView();
-});
-
-// Modal close
+refreshBtn.addEventListener("click", () => renderLibraryView());
 closeModalBtn.addEventListener("click", () => modal.classList.remove("active"));
-window.addEventListener("click", (e) => {
-    if (e.target === modal) modal.classList.remove("active");
-});
-
-// Profile button
-profileBtn.addEventListener("click", () => {
-    alert("👤 User Profile\n\nWelcome to Library Vista!\n\n• Total Books Available: " + getAllBooks().length + "\n• Categories: " + Object.keys(booksDB).length + "\n\nAccount features coming soon.");
-});
+window.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("active"); });
+profileBtn.addEventListener("click", () => alert("👤 User Profile\n\nWelcome to Library Vista!\n\n• Total Books: " + getAllBooks().length + "\n• Categories: " + Object.keys(booksDB).length));
 
 // Initialize
 loadSettings();

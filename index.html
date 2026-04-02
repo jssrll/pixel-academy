@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Library Vista | Digital Catalog</title>
-    <!-- Google Fonts & Apple-like Font Stack -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
+    <!-- CSS Stylesheet - FIXED PATH -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -39,7 +39,7 @@
 </div>
 
 <main class="main-content" id="mainContent"></main>
-<div class="footer-note"><i class="fas fa-database"></i> live sync with Google Sheets · Apple-inspired design</div>
+<div class="footer-note"><i class="fas fa-database"></i> Google Sheets Backend Ready · Apple-inspired Design</div>
 
 <!-- Detail Modal -->
 <div id="detailModal" class="detail-modal">
@@ -47,20 +47,20 @@
         <span class="modal-close" id="closeModalBtn">&times;</span>
         <div id="modalContent">
             <h3 id="modalTitle"></h3>
-            <p id="modalAuthor"></p>
-            <p id="modalCategory"></p>
-            <p id="modalDesc"></p>
+            <p id="modalAuthor" style="color: #6e6e73; margin-bottom: 12px;"></p>
+            <p id="modalCategory" style="margin-bottom: 16px;"></p>
+            <p id="modalDesc" style="line-height: 1.5;"></p>
             <a id="modalLink" href="#" target="_blank" class="modal-link">Open Book <i class="fas fa-external-link-alt"></i></a>
         </div>
     </div>
 </div>
 
-<!-- Scripts -->
-<script src="books-database.js"></script>
-<script src="ai-tools.js"></script>
-<script src="minsu-portal.js"></script>
-<script src="settings.js"></script>
-<script src="chatbase.js"></script>
-<script src="script.js"></script>
+<!-- JavaScript Files - FIXED PATHS - Load in correct order -->
+<script src="js/books-database.js"></script>
+<script src="js/ai-tools.js"></script>
+<script src="js/minsu-portal.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/chatbase.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>
