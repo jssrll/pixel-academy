@@ -1,0 +1,62 @@
+{
+  "name": "Library Vista",
+  "short_name": "Library Vista",
+  "description": "Digital Library Catalog with AI Tools and Resources",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#007aff",
+  "background_color": "#f5f5f7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon/apple-touch-icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "apple touch icon"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Library",
+      "short_name": "Library",
+      "description": "View all books",
+      "url": "/",
+      "icons": [{ "src": "favicon/favicon-32x32.png", "sizes": "32x32" }]
+    },
+    {
+      "name": "AI Tools",
+      "short_name": "AI Tools",
+      "description": "Access AI resources",
+      "url": "/?page=ai-tools",
+      "icons": [{ "src": "favicon/favicon-32x32.png", "sizes": "32x32" }]
+    },
+    {
+      "name": "Settings",
+      "short_name": "Settings",
+      "description": "App preferences",
+      "url": "/?page=settings",
+      "icons": [{ "src": "favicon/favicon-32x32.png", "sizes": "32x32" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Library Vista Home Screen"
+    }
+  ]
+}
