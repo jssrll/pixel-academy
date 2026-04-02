@@ -4,6 +4,10 @@ let currentPage = "library";
 let currentCategory = "All Books";
 let currentFolder = null;
 
+// Force App Install Variables
+let forceInstallDeferredPrompt = null;
+let isAppInstalled = false;
+
 const mainContainer = document.getElementById("mainContent");
 const categoryStrip = document.getElementById("categoryStrip");
 const categoryContainer = document.getElementById("categoryFilterContainer");
@@ -18,9 +22,135 @@ const modalDesc = document.getElementById("modalDesc");
 const modalLink = document.getElementById("modalLink");
 const profileBtn = document.getElementById("profileIconBtn");
 
+// ========================================
+// FORCE APP INSTALL - BLOCK ACCESS TO BOOKS
+// ========================================
+
+// Check if app is installed (standalone mode)
+function checkIfAppInstalled() {
+    // Check if running in standalone mode (installed PWA)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                        window.navigator.standalone === true;
+    
+    // Check localStorage if user already installed
+    const appInstalledFlag = localStorage.getItem('pixel_academy_app_installed');
+    
+    if (isStandalone || appInstalledFlag === 'true') {
+        isAppInstalled = true;
+        hideAppRequiredOverlay();
+        return true;
+    }
+    
+    return false;
+}
+
+// Show app required overlay
+function showAppRequiredOverlay() {
+    const overlay = document.getElementById('appRequiredOverlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+    }
+}
+
+// Hide app required overlay
+function hideAppRequiredOverlay() {
+    const overlay = document.getElementById('appRequiredOverlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+// Block book access - show overlay if app not installed
+function blockBookAccessIfNeeded() {
+    if (!isAppInstalled) {
+        showAppRequiredOverlay();
+        return true; // Blocked
+    }
+    return false; // Allowed
+}
+
+// Listen for beforeinstallprompt event
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    forceInstallDeferredPrompt = e;
+    console.log('✅ Install prompt available for Pixel Academy');
+});
+
+// Handle force install button click
+function triggerForceInstall() {
+    if (forceInstallDeferredPrompt) {
+        forceInstallDeferredPrompt.prompt();
+        forceInstallDeferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted install');
+                localStorage.setItem('pixel_academy_app_installed', 'true');
+                isAppInstalled = true;
+                hideAppRequiredOverlay();
+                showToastMessage("✅ App installed! You can now access all books.", 3000);
+                renderLibraryView();
+            } else {
+                console.log('User dismissed install');
+                showToastMessage("Please install the app to access books.", 2000);
+            }
+            forceInstallDeferredPrompt = null;
+        });
+    } else {
+        // Fallback - show instructions
+        showToastMessage("Tap the share button and select 'Add to Home Screen'", 3000);
+    }
+}
+
+// Handle app installed event
+window.addEventListener('appinstalled', () => {
+    console.log('App was installed successfully');
+    localStorage.setItem('pixel_academy_app_installed', 'true');
+    isAppInstalled = true;
+    hideAppRequiredOverlay();
+    showToastMessage("✅ Thank you for installing! You can now access all books.", 3000);
+    renderLibraryView();
+});
+
+// Initialize force install check
+function initForceInstall() {
+    // Check if already installed
+    if (checkIfAppInstalled()) {
+        return;
+    }
+    
+    // Show overlay immediately to block access
+    showAppRequiredOverlay();
+    
+    // Setup install button
+    const forceInstallBtn = document.getElementById('forceInstallBtn');
+    if (forceInstallBtn) {
+        forceInstallBtn.addEventListener('click', triggerForceInstall);
+    }
+}
+
+// Custom toast for this script
+function showToastMessage(message, duration = 2000) {
+    // Check if main toast exists
+    const toast = document.getElementById("toastMsg");
+    if (toast) {
+        toast.innerText = message;
+        toast.classList.add("show");
+        setTimeout(() => { toast.classList.remove("show"); }, duration);
+    } else {
+        alert(message);
+    }
+}
+
 // Navigation
 document.querySelectorAll(".nav-tab").forEach(tab => {
     tab.addEventListener("click", () => {
+        // Check if app is installed before switching pages
+        if (!isAppInstalled && tab.dataset.page !== "settings") {
+            showAppRequiredOverlay();
+            return;
+        }
+        
         document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
         currentPage = tab.dataset.page;
@@ -39,6 +169,22 @@ document.querySelectorAll(".nav-tab").forEach(tab => {
 });
 
 function renderLibraryView() {
+    // Block if app not installed
+    if (!isAppInstalled) {
+        showAppRequiredOverlay();
+        mainContainer.innerHTML = `
+            <div class="empty-state" style="padding: 80px 20px;">
+                <i class="fas fa-mobile-alt" style="font-size: 4rem; color: #007aff; margin-bottom: 20px;"></i>
+                <h3>App Required</h3>
+                <p>Please install the Pixel Academy app to access books.</p>
+                <button class="btn-primary-apple" onclick="triggerForceInstall()" style="margin-top: 20px;">
+                    <i class="fas fa-download"></i> Install App
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
     updateStats();
     renderCategoryChips();
     renderBooksGrid();
@@ -64,6 +210,10 @@ function renderCategoryChips() {
     
     document.querySelectorAll('.cat-chip').forEach(chip => {
         chip.addEventListener('click', () => {
+            if (!isAppInstalled) {
+                showAppRequiredOverlay();
+                return;
+            }
             currentCategory = chip.dataset.category;
             currentFolder = null;
             renderCategoryChips();
@@ -73,6 +223,12 @@ function renderCategoryChips() {
 }
 
 function renderBooksGrid() {
+    // Block if app not installed
+    if (!isAppInstalled) {
+        showAppRequiredOverlay();
+        return;
+    }
+    
     if (currentCategory === "All Books") {
         displayBooks(getAllBooks());
     } else if (hasDirectBooks(currentCategory)) {
@@ -98,6 +254,10 @@ function renderBooksGrid() {
                 `;
                 document.querySelectorAll('.folder-card').forEach(card => {
                     card.addEventListener('click', () => {
+                        if (!isAppInstalled) {
+                            showAppRequiredOverlay();
+                            return;
+                        }
                         currentFolder = card.dataset.folder;
                         renderBooksGrid();
                     });
@@ -109,6 +269,22 @@ function renderBooksGrid() {
 }
 
 function displayBooks(books) {
+    // Block if app not installed
+    if (!isAppInstalled) {
+        showAppRequiredOverlay();
+        mainContainer.innerHTML = `
+            <div class="empty-state" style="padding: 80px 20px;">
+                <i class="fas fa-mobile-alt" style="font-size: 4rem; color: #007aff; margin-bottom: 20px;"></i>
+                <h3>App Required</h3>
+                <p>Please install the Pixel Academy app to access books.</p>
+                <button class="btn-primary-apple" onclick="triggerForceInstall()" style="margin-top: 20px;">
+                    <i class="fas fa-download"></i> Install App
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
     if (!books || books.length === 0) {
         mainContainer.innerHTML = `<div class="empty-state">No books found in this category.</div>`;
         return;
@@ -130,6 +306,13 @@ function displayBooks(books) {
     
     document.querySelectorAll('.book-card:not(.folder-card)').forEach(card => {
         card.addEventListener('click', () => {
+            // CHECK APP INSTALLATION BEFORE OPENING BOOK
+            if (!isAppInstalled) {
+                showAppRequiredOverlay();
+                showToastMessage("Please install the app first to open books!", 2000);
+                return;
+            }
+            
             const url = card.dataset.url;
             const title = card.dataset.title;
             if (url && url !== "#") {
@@ -154,11 +337,49 @@ function escapeHtml(str) {
     });
 }
 
-refreshBtn.addEventListener("click", () => renderLibraryView());
+refreshBtn.addEventListener("click", () => {
+    if (!isAppInstalled) {
+        showAppRequiredOverlay();
+        return;
+    }
+    renderLibraryView();
+});
+
 closeModalBtn.addEventListener("click", () => modal.classList.remove("active"));
 window.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("active"); });
-profileBtn.addEventListener("click", () => alert("👤 User Profile\n\nWelcome to Library Vista!\n\n• Total Books: " + getAllBooks().length + "\n• Categories: " + Object.keys(booksDB).length));
+
+profileBtn.addEventListener("click", () => {
+    if (!isAppInstalled) {
+        showAppRequiredOverlay();
+        return;
+    }
+    alert("👤 User Profile\n\nWelcome to Pixel Academy!\n\n• Total Books: " + getAllBooks().length + "\n• Categories: " + Object.keys(booksDB).length);
+});
+
+// Expose functions to global scope
+window.triggerForceInstall = triggerForceInstall;
+window.showAppRequiredOverlay = showAppRequiredOverlay;
+window.hideAppRequiredOverlay = hideAppRequiredOverlay;
+window.checkIfAppInstalled = checkIfAppInstalled;
 
 // Initialize
 loadSettings();
-renderLibraryView();
+
+// Initialize force install check first
+initForceInstall();
+
+// Only render library if app is installed
+if (isAppInstalled) {
+    renderLibraryView();
+} else {
+    mainContainer.innerHTML = `
+        <div class="empty-state" style="padding: 80px 20px;">
+            <i class="fas fa-mobile-alt" style="font-size: 4rem; color: #007aff; margin-bottom: 20px;"></i>
+            <h3>App Required</h3>
+            <p>Please install the Pixel Academy app to access books and resources.</p>
+            <button class="btn-primary-apple" onclick="triggerForceInstall()" style="margin-top: 20px;">
+                <i class="fas fa-download"></i> Install App Now
+            </button>
+        </div>
+    `;
+}
