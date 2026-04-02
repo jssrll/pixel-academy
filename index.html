@@ -95,6 +95,93 @@
     </div>
 </div>
 
+<!-- Account Modal -->
+<div id="accountModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2><i class="fas fa-graduation-cap"></i> Pixel Academy Account</h2>
+      <button class="close-modal" onclick="closeAccountModal()">&times;</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+      <button class="tab-btn" onclick="switchTab('register')">Register</button>
+    </div>
+    
+    <!-- LOGIN TAB -->
+    <div id="loginTab" class="tab-content active">
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label><i class="fas fa-id-card"></i> School ID Number</label>
+          <input type="text" id="loginSchoolId" placeholder="Enter your School ID" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Passcode</label>
+          <input type="password" id="loginPasscode" placeholder="Enter your passcode" required>
+        </div>
+        <button type="submit" class="btn-primary-apple full-width" id="loginBtn">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+      </form>
+    </div>
+    
+    <!-- REGISTER TAB -->
+    <div id="registerTab" class="tab-content">
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label><i class="fas fa-user"></i> Full Name</label>
+          <input type="text" id="regFullName" placeholder="Enter your full name" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-id-card"></i> School ID Number</label>
+          <input type="text" id="regSchoolId" placeholder="Enter your School ID" required>
+          <small id="schoolIdCheckMsg" style="display: none;"></small>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Passcode</label>
+          <input type="password" id="regPasscode" placeholder="Create a passcode" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-check-circle"></i> Confirm Passcode</label>
+          <input type="password" id="regConfirmPasscode" placeholder="Confirm your passcode" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-user-tag"></i> Status</label>
+          <select id="regStatus" class="settings-select" required>
+            <option value="">Select Status</option>
+            <option value="student">Student</option>
+            <option value="faculty">Faculty/Staff</option>
+          </select>
+        </div>
+        
+        <!-- Student Only Fields -->
+        <div id="studentFields" style="display: none;">
+          <div class="form-group">
+            <label><i class="fas fa-layer-group"></i> Year Level</label>
+            <select id="regYearLevel" class="settings-select">
+              <option value="">Select Year Level</option>
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-users"></i> Section</label>
+            <input type="text" id="regSection" placeholder="Enter your section (e.g., A, B, C)">
+          </div>
+        </div>
+        
+        <button type="submit" class="btn-primary-apple full-width" id="registerBtn">
+          <i class="fas fa-user-plus"></i> Create Account
+        </button>
+        <div id="registerLoading" class="loading-indicator" style="display: none;">
+          <i class="fas fa-spinner fa-spin"></i> Creating account...
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- Install PWA Prompt (shows when app is installable) -->
 <div id="installPrompt" class="install-prompt" style="display: none;">
     <div class="install-prompt-content">
